@@ -1,9 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 from keypad import Keypad
-# from Calculate import Calculate
 from math import sqrt
-
+import pygame
 
 class CalculatorUI(tk.Tk):
 
@@ -78,13 +77,21 @@ class CalculatorUI(tk.Tk):
 
     def calculate(self):
         get_text = self.text.get()
-        self.result = str(eval(str(self.text.get())))
+        try:
+            self.result = str(eval(str(self.text.get())))
+        except Exception as e:
+            self.entry.config(fg='red')
+            pygame.mixer.init()
+            pygame.mixer.music.load('/Users/swischyasunthonphusit/Loud Incorrect Buzzer Lie Sound Effect.mp3')
+            pygame.mixer.music.play()
         self.text_history.append([get_text, self.result])
         self.clear()
         self.show(self.result)
 
     def clear(self):
         self.text.set(' ')
+        self.entry.config(fg='black')
+
 
     def history(self):
         self.clear()
@@ -92,10 +99,9 @@ class CalculatorUI(tk.Tk):
             self.text.set(f'{text[0]} = {text[1]}')
 
     def delete(self):
-        # if 'sqrt' in self.text.get():
-        for text in [*str(self.text.get())][:-1]:
-
-            self.text.set(f'{text}')
+        if self.text.get()[-1] == 't':
+            self.text.set(self.text.get()[:-3])
+        self.text.set(self.text.get()[:-1])
 
     def sqrt(self):
         if [*str(self.text.get())][-1] in ['+', '-', '*', '/']:
