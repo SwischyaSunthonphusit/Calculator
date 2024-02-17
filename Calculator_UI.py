@@ -1,19 +1,21 @@
 import tkinter as tk
 from tkinter import ttk
 from keypad import Keypad
-from Calculate import Calculate
-import math
+# from Calculate import Calculate
+from math import sqrt
 
 
 class CalculatorUI(tk.Tk):
 
     def __init__(self):
         super().__init__()
+        self.title('Calculate')
         self.text = tk.StringVar()
+        self.text_history = []
         self.init_component()
 
     def init_component(self):
-        self.entry = tk.Entry(justify='right', textvariable=self.text, font=('Monospace', 16), fg='yellow')
+        self.entry = tk.Entry(justify='right', textvariable=self.text, font=('Monospace', 16), fg='black')
         self.entry.pack(side=tk.TOP, expand=True, fill=tk.BOTH, anchor=tk.NW)
 
         keypad = self.make_keypad()
@@ -28,29 +30,78 @@ class CalculatorUI(tk.Tk):
     def make_keypad(self) -> tk.Frame:
         """Create a frame containing buttons for the numeric keys."""
         frame = tk.Frame(self)
-        keys = list('789456123 0.')
+        keys = list('789456123.0')
         for i, keyname in enumerate(keys):
             button = tk.Button(frame, text=keyname, command=lambda val=keyname: self.show(val))
             button.grid(row=i // 3, column=i % 3, sticky=tk.NSEW)
             frame.grid_rowconfigure(i // 3, weight=1)
             frame.grid_columnconfigure(i % 3, weight=1)
+
+        button = tk.Button(frame, text='CLR', command=self.clear)
+        button.grid(row=3, column=2, sticky=tk.NSEW)
+        frame.grid_rowconfigure(0, weight=1)
+        frame.grid_columnconfigure(0, weight=1)
+
+        button = tk.Button(frame, text='HSTR', command=self.history, width=1)
+        button.grid(row=4, column=0, sticky=tk.NSEW)
+        frame.grid_rowconfigure(0, weight=1)
+        frame.grid_columnconfigure(0, weight=1)
+
+        button = tk.Button(frame, text='DEL', command=self.delete, width=1)
+        button.grid(row=4, column=1, sticky=tk.NSEW)
+        frame.grid_rowconfigure(0, weight=1)
+        frame.grid_columnconfigure(0, weight=1)
+
         return frame
 
     def make_operator_pad(self) -> tk.Frame:
         """Create a frame containing buttons for operators."""
         frame = tk.Frame(self)
-        operators = ['+', '-', '*', '/',]
+        operators = ['+', '-', '*', '/', '(', ')']
 
         for i, op in enumerate(operators):
-            button = tk.Button(frame, text=op, command=lambda val=op: self.show(val))
-            button.grid(row=i, column=0, sticky=tk.NSEW, padx=2, pady=2)
+            button = tk.Button(frame, text=op, command=lambda val=op: self.show(val), width=1)
+            button.grid(row=i, column=0, sticky=tk.NSEW)
             frame.grid_rowconfigure(i, weight=1)
             frame.grid_columnconfigure(0, weight=1)
-        button = tk.Button(frame, text='=', command=Calculate.calculate())
-        button.grid(row=4, column=0, sticky=tk.NSEW)
+
+        button = tk.Button(frame, text='sqrt', command=self.sqrt, width=1)
+        button.grid(row=6, column=0, sticky=tk.NSEW)
+        frame.grid_rowconfigure(0, weight=1)
+        frame.grid_columnconfigure(0, weight=1)
+
+        button = tk.Button(frame, text='=', command=self.calculate)
+        button.grid(row=7, column=0, sticky=tk.NSEW)
         frame.grid_rowconfigure(0, weight=1)
         frame.grid_columnconfigure(0, weight=1)
         return frame
+
+    def calculate(self):
+        get_text = self.text.get()
+        self.result = str(eval(str(self.text.get())))
+        self.text_history.append([get_text, self.result])
+        self.clear()
+        self.show(self.result)
+
+    def clear(self):
+        self.text.set(' ')
+
+    def history(self):
+        self.clear()
+        for text in self.text_history:
+            self.text.set(f'{text[0]} = {text[1]}')
+
+    def delete(self):
+        # if 'sqrt' in self.text.get():
+        for text in [*str(self.text.get())][:-1]:
+
+            self.text.set(f'{text}')
+
+    def sqrt(self):
+        if [*str(self.text.get())][-1] in ['+', '-', '*', '/']:
+            self.text.set(f'{self.text.get()}sqrt(')
+        else:
+            self.text.set(f'sqrt({self.text.get()})')
 
     def run(self):
         self.mainloop()

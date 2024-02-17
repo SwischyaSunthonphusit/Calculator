@@ -1,8 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, Label
 
-
-#TODO Keypad should extend Frame so that it is a container
 class Keypad(tk.Frame):
 
     def __init__(self, parent, keynames=list, columns=1, **kwargs):
