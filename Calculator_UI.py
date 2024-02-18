@@ -1,8 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
 from keypad import Keypad
-from math import sqrt
+from math import sqrt, log
 import pygame
+
 
 class CalculatorUI(tk.Tk):
 
@@ -64,13 +65,18 @@ class CalculatorUI(tk.Tk):
             frame.grid_rowconfigure(i, weight=1)
             frame.grid_columnconfigure(0, weight=1)
 
-        button = tk.Button(frame, text='sqrt', command=self.sqrt, width=1)
+        button = tk.Button(frame, text='sqrt', command=lambda: self.special_op('sqrt'))
         button.grid(row=6, column=0, sticky=tk.NSEW)
         frame.grid_rowconfigure(0, weight=1)
         frame.grid_columnconfigure(0, weight=1)
 
-        button = tk.Button(frame, text='=', command=self.calculate)
+        button = tk.Button(frame, text='log', command=lambda: self.special_op('log'))
         button.grid(row=7, column=0, sticky=tk.NSEW)
+        frame.grid_rowconfigure(0, weight=1)
+        frame.grid_columnconfigure(0, weight=1)
+
+        button = tk.Button(frame, text='=', command=self.calculate)
+        button.grid(row=8, column=0, sticky=tk.NSEW)
         frame.grid_rowconfigure(0, weight=1)
         frame.grid_columnconfigure(0, weight=1)
         return frame
@@ -82,7 +88,7 @@ class CalculatorUI(tk.Tk):
         except Exception as e:
             self.entry.config(fg='red')
             pygame.mixer.init()
-            pygame.mixer.music.load('/Users/swischyasunthonphusit/Loud Incorrect Buzzer Lie Sound Effect.mp3')
+            pygame.mixer.music.load('/Users/swischyasunthonphusit/Calculator/Loud Incorrect Buzzer Lie Sound Effect.mp3')
             pygame.mixer.music.play()
         self.text_history.append([get_text, self.result])
         self.clear()
@@ -92,22 +98,21 @@ class CalculatorUI(tk.Tk):
         self.text.set(' ')
         self.entry.config(fg='black')
 
-
     def history(self):
         self.clear()
         for text in self.text_history:
-            self.text.set(f'{text[0]} = {text[1]}')
+            self.text.set(f'{text[0]} = {text[1]} \n ')
 
     def delete(self):
-        if self.text.get()[-1] == 't':
-            self.text.set(self.text.get()[:-3])
+        if self.text.get()[-1] == '(' and self.text.get()[-2] == 't':
+            self.text.set(self.text.get()[:-4])
         self.text.set(self.text.get()[:-1])
 
-    def sqrt(self):
+    def special_op(self, value):
         if [*str(self.text.get())][-1] in ['+', '-', '*', '/']:
-            self.text.set(f'{self.text.get()}sqrt(')
+            self.text.set(f'{self.text.get()}{value}(')
         else:
-            self.text.set(f'sqrt({self.text.get()})')
+            self.text.set(f'{value}({self.text.get()})')
 
     def run(self):
         self.mainloop()
