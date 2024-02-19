@@ -24,27 +24,36 @@ class Calculate():
 
     def clear(self):
         self.ui.text.set(' ')
-        self.ui.entry.config(fg='black')
-
-    def history(self):
-        self.history_combobox = tk.Tk()
-        self.history_combobox.title('Calculate History')
-        self.history_combobox = ttk.Combobox()
-        for text in self.text_history:
-            self.history_combobox['values'] = [f'{text[0]} = {text[1]}']
-            self.history_combobox.pack(pady=10)
-            self.history_combobox.bind("<<ComboboxSelected>>", self.ui.text.set(f'{text[0]} = {text[1]}'))
+        self.ui.entry.config(fg='purple')
 
     def delete(self):
-        get_text = self.ui.text.get()
-        if get_text[-1] == '(' and get_text[-2] == 'g':
-            self.ui.text.set(get_text[:-3])
-        if get_text[-1] == '(' and get_text[-2] == 't':
-            self.ui.text.set(get_text[:-4])
-        self.ui.text.set(get_text[:-1])
+        if self.ui.text.get()[-1] == '(' and self.ui.text.get()[-2] == 'g':
+            self.ui.text.set(self.ui.text.get()[:-3])
+        if self.ui.text.get()[-1] == '(' and self.ui.text.get()[-2] == 't':
+            self.ui.text.set(self.ui.text.get()[:-4])
+        self.ui.text.set(self.ui.text.get()[:-1])
 
     def special_op(self, value):
         if [*str(self.ui.text.get())][-1] in ['+', '-', '*', '/']:
             self.ui.text.set(f'{self.ui.text.get()}{value}(')
         else:
             self.ui.text.set(f'{value}({self.ui.text.get()})')
+
+
+class Model(Calculate):
+    def __init__(self, ui):
+        super().__init__(Calculate)
+        self.ui = ui
+
+    def history(self):
+        self.history_window = tk.Toplevel()  # Use Toplevel for a separate window
+        self.history_window.title('Calculate History')
+        self.history_combobox = ttk.Combobox(self.history_window)
+        history_values = []
+        for text in self.text_history:
+            history_values.append([f'{text[0]} = {text[1]}'])
+        self.history_combobox['values'] = history_values
+        self.history_combobox.pack(pady=10)
+        self.history_combobox.bind("<<ComboboxSelected>>", self.ui.text.set(self.history_combobox.get()))
+
+
