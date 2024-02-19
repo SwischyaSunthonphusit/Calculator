@@ -1,21 +1,26 @@
 import tkinter as tk
 from tkinter import ttk
-from keypad import Keypad
-from math import sqrt, log
-import pygame
-
+from Calculate import Calculate
 
 class CalculatorUI(tk.Tk):
-
     def __init__(self):
         super().__init__()
         self.title('Calculate')
         self.text = tk.StringVar()
-        self.text_history = []
         self.init_component()
 
     def init_component(self):
-        self.entry = tk.Entry(justify='right', textvariable=self.text, font=('Monospace', 16), fg='black')
+        self.calculator = Calculate(self)
+
+        menubar = tk.Menu(self)
+        self.config(menu=menubar)
+        self.menubar = tk.Menu(menubar, tearoff=0)
+        self.menubar.add_command(label='History', command=lambda: self.calculator.history())
+        self.menubar.add_separator()
+        self.menubar.add_command(label='Exit', command=self.destroy)
+        menubar.add_cascade(label='History and Exit', menu=self.menubar)
+
+        self.entry = tk.Entry(justify='right', textvariable=self.text, font=('Monospace', 16), fg='black', state='readonly')
         self.entry.pack(side=tk.TOP, expand=True, fill=tk.BOTH, anchor=tk.NW)
 
         keypad = self.make_keypad()
@@ -37,17 +42,12 @@ class CalculatorUI(tk.Tk):
             frame.grid_rowconfigure(i // 3, weight=1)
             frame.grid_columnconfigure(i % 3, weight=1)
 
-        button = tk.Button(frame, text='CLR', command=self.clear)
+        button = tk.Button(frame, text='CLR', command=self.calculator.clear)
         button.grid(row=3, column=2, sticky=tk.NSEW)
         frame.grid_rowconfigure(0, weight=1)
         frame.grid_columnconfigure(0, weight=1)
 
-        button = tk.Button(frame, text='HSTR', command=self.history, width=1)
-        button.grid(row=4, column=0, sticky=tk.NSEW)
-        frame.grid_rowconfigure(0, weight=1)
-        frame.grid_columnconfigure(0, weight=1)
-
-        button = tk.Button(frame, text='DEL', command=self.delete, width=1)
+        button = tk.Button(frame, text='DEL', command=self.calculator.delete, width=1)
         button.grid(row=4, column=1, sticky=tk.NSEW)
         frame.grid_rowconfigure(0, weight=1)
         frame.grid_columnconfigure(0, weight=1)
@@ -65,54 +65,21 @@ class CalculatorUI(tk.Tk):
             frame.grid_rowconfigure(i, weight=1)
             frame.grid_columnconfigure(0, weight=1)
 
-        button = tk.Button(frame, text='sqrt', command=lambda: self.special_op('sqrt'))
+        button = tk.Button(frame, text='sqrt', command=lambda: self.calculator.special_op('sqrt'))
         button.grid(row=6, column=0, sticky=tk.NSEW)
         frame.grid_rowconfigure(0, weight=1)
         frame.grid_columnconfigure(0, weight=1)
 
-        button = tk.Button(frame, text='log', command=lambda: self.special_op('log'))
+        button = tk.Button(frame, text='log', command=lambda: self.calculator.special_op('log'))
         button.grid(row=7, column=0, sticky=tk.NSEW)
         frame.grid_rowconfigure(0, weight=1)
         frame.grid_columnconfigure(0, weight=1)
 
-        button = tk.Button(frame, text='=', command=self.calculate)
+        button = tk.Button(frame, text='=', command=self.calculator.calculate)
         button.grid(row=8, column=0, sticky=tk.NSEW)
         frame.grid_rowconfigure(0, weight=1)
         frame.grid_columnconfigure(0, weight=1)
         return frame
-
-    def calculate(self):
-        get_text = self.text.get()
-        try:
-            self.result = str(eval(str(self.text.get())))
-        except Exception as e:
-            self.entry.config(fg='red')
-            pygame.mixer.init()
-            pygame.mixer.music.load('/Users/swischyasunthonphusit/Calculator/Loud Incorrect Buzzer Lie Sound Effect.mp3')
-            pygame.mixer.music.play()
-        self.text_history.append([get_text, self.result])
-        self.clear()
-        self.show(self.result)
-
-    def clear(self):
-        self.text.set(' ')
-        self.entry.config(fg='black')
-
-    def history(self):
-        self.clear()
-        for text in self.text_history:
-            self.text.set(f'{text[0]} = {text[1]} \n ')
-
-    def delete(self):
-        if self.text.get()[-1] == '(' and self.text.get()[-2] == 't':
-            self.text.set(self.text.get()[:-4])
-        self.text.set(self.text.get()[:-1])
-
-    def special_op(self, value):
-        if [*str(self.text.get())][-1] in ['+', '-', '*', '/']:
-            self.text.set(f'{self.text.get()}{value}(')
-        else:
-            self.text.set(f'{value}({self.text.get()})')
 
     def run(self):
         self.mainloop()
