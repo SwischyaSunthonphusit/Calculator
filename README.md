@@ -1,7 +1,7 @@
 ## Calculator
 For my calculator project, you can perform calculations using the following operators:
-basic operator : plus(+), minus(-), multiply(*) and divide(/).
-advance operator : ln, log10, log2, exp, sqrt and power by using '**' operator.
+- basic operator : plus(+), minus(-), multiply(*) and divide(/).
+- advance operator : ln, log10, log2, exp, sqrt and power by using '**' operator.
 
 # How to use my program.
 - Run the program by executing 'python Calculator.py' in the terminal.
