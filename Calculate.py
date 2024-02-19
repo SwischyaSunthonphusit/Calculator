@@ -38,11 +38,9 @@ class Calculate():
         self.ui.text.set(self.ui.text.get()[:-1])
 
     def special_op(self, value):
-        if self.ui.text.get() == '':
-            self.ui.text.set(f'{value}()')
         if [*str(self.ui.text.get())][-1] in ['+', '-', '*', '/']:
             self.ui.text.set(f'{self.ui.text.get()}{value}(')
-        if isinstance([*str(self.ui.text.get())][-1], int):
+        else:
             self.ui.text.set(f'{value}({self.ui.text.get()})')
 
     def history(self):
