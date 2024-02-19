@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-from Calculate import Calculate, Model
+from Calculate import Calculate
 
 class CalculatorUI(tk.Tk):
     def __init__(self):
@@ -11,12 +11,11 @@ class CalculatorUI(tk.Tk):
 
     def init_component(self):
         self.calculator = Calculate(self)
-        self.model = Model(self)
 
         menubar = tk.Menu(self)
         self.config(menu=menubar)
         self.menubar = tk.Menu(menubar, tearoff=0)
-        self.menubar.add_command(label='History', command=lambda: self.model.history())
+        self.menubar.add_command(label='History', command=lambda: self.calculator.history())
         self.menubar.add_separator()
         self.menubar.add_command(label='Exit', command=self.destroy)
         menubar.add_cascade(label='History and Exit', menu=self.menubar)
@@ -71,13 +70,28 @@ class CalculatorUI(tk.Tk):
         frame.grid_rowconfigure(0, weight=1)
         frame.grid_columnconfigure(0, weight=1)
 
-        button = tk.Button(frame, text='log', command=lambda: self.calculator.special_op('log'), fg='purple')
+        button = tk.Button(frame, text='ln', command=lambda: self.calculator.special_op('ln'), fg='purple')
         button.grid(row=7, column=0, sticky=tk.NSEW)
         frame.grid_rowconfigure(0, weight=1)
         frame.grid_columnconfigure(0, weight=1)
 
-        button = tk.Button(frame, text='=', command=self.calculator.calculate, fg='purple')
+        button = tk.Button(frame, text='log10', command=lambda: self.calculator.special_op('log10'), fg='purple')
         button.grid(row=8, column=0, sticky=tk.NSEW)
+        frame.grid_rowconfigure(0, weight=1)
+        frame.grid_columnconfigure(0, weight=1)
+
+        button = tk.Button(frame, text='log2', command=lambda: self.calculator.special_op('log2'), fg='purple')
+        button.grid(row=9, column=0, sticky=tk.NSEW)
+        frame.grid_rowconfigure(0, weight=1)
+        frame.grid_columnconfigure(0, weight=1)
+
+        button = tk.Button(frame, text='exp', command=lambda: self.calculator.special_op('exp'), fg='purple')
+        button.grid(row=10, column=0, sticky=tk.NSEW)
+        frame.grid_rowconfigure(0, weight=1)
+        frame.grid_columnconfigure(0, weight=1)
+
+        button = tk.Button(frame, text='=', command=self.calculator.calculate, fg='purple')
+        button.grid(row=11, column=0, sticky=tk.NSEW)
         frame.grid_rowconfigure(0, weight=1)
         frame.grid_columnconfigure(0, weight=1)
         return frame
